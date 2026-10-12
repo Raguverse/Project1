@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="min-h-screen bg-gray-100 px-4 py-8 font-sans text-gray-800 sm:py-12">
+    <main class="mx-auto grid min-h-[600px] max-w-5xl overflow-hidden rounded-lg bg-white shadow-lg md:grid-cols-2">
+        <section class="flex flex-col justify-center bg-green-100 p-8 sm:p-12">
+            <h1 class="text-3xl font-bold text-green-900">Register</h1>
+            <p class="mt-4 max-w-sm leading-relaxed text-green-800">Create an account to get started. Enter your name, email, and a password with at least six characters to complete your registration.</p>
+        </section>
+
+        <section class="p-8 sm:p-12">
+            <form id="registration-form" class="mx-auto max-w-md space-y-4" novalidate>
+                <div>
+                    <label for="name" class="mb-1 block text-sm font-medium">Name</label>
+                    <input id="name" name="name" type="text" autocomplete="name" aria-describedby="name-error"
+                        class="w-full rounded border border-gray-300 px-3 py-2 focus:border-green-600 focus:outline-none">
+                    <p id="name-error" class="mt-1 h-5 text-sm text-red-600" aria-live="polite"></p>
+                </div>
+                <div>
+                    <label for="email" class="mb-1 block text-sm font-medium">Email</label>
+                    <input id="email" name="email" type="email" autocomplete="email" aria-describedby="email-error"
+                        class="w-full rounded border border-gray-300 px-3 py-2 focus:border-green-600 focus:outline-none">
+                    <p id="email-error" class="mt-1 h-5 text-sm text-red-600" aria-live="polite"></p>
+                </div>
+                <div>
+                    <label for="password" class="mb-1 block text-sm font-medium">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" aria-describedby="password-error"
+                        class="w-full rounded border border-gray-300 px-3 py-2 focus:border-green-600 focus:outline-none">
+                    <p id="password-error" class="mt-1 h-5 text-sm text-red-600" aria-live="polite"></p>
+                </div>
+                <button id="submit-button" type="submit" disabled
+                    class="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50">Register</button>
+            </form>
+            <p id="success-message" class="mx-auto mt-4 max-w-md text-sm text-green-700" role="status"
+                aria-live="polite"></p>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("registration-form");
+        const inputs = [...form.querySelectorAll("input")];
+        const submitButton = document.getElementById("submit-button");
+        const successMessage = document.getElementById("success-message");
+        const touchedFields = new Set();
+
+        function validateForm() {
+            let validForm = true;
+            inputs.forEach((input) => {
+                const valid = input.id === "name" ? input.value.trim() !== "" : input.id === "email" ? input.value.trim() !== "" && input.validity.valid : input.value.length >= 6;
+                const showError = !valid && touchedFields.has(input);
+                document.getElementById(`${input.id}-error`).textContent = showError ? input.id === "name" ? "Please enter your name." : input.id === "email" ? "Please enter a valid email address." : "Use at least 6 characters." : "";
+                input.setAttribute("aria-invalid", String(showError));
+                validForm = valid && validForm;
+            });
+            submitButton.disabled = !validForm;
+            return validForm;
+        }
+
+        inputs.forEach((input) => {
+            input.addEventListener("focus", () => touchedFields.add(input));
+            input.addEventListener("input", () => { touchedFields.add(input); successMessage.textContent = ""; validateForm(); });
+        });
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (validateForm()) {
+                successMessage.textContent = "Registration successful.";
+            }
+        });
+    </script>
+</body>
+</html>
